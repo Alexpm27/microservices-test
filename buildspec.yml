@@ -3,7 +3,10 @@ version: 0.2
 phases:
   install:
     commands:
+      - sudo apt update
+      - sudo apt install maven
       - cp ./settings.xml /root/.m2/settings.xml
+
     runtime-versions:
       java: corretto17
   pre_build:
