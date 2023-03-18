@@ -2,22 +2,19 @@ version: 0.2
 
 phases:
   install:
-    commands:
-      - sudo apt install maven
-
     runtime-versions:
       java: corretto17
   pre_build:
     commands:
-      - wget http://www-eu.apache.org/dist/maven/maven-3/3.9.0/binaries/apache-maven-3.9.0-bin.tar.gz
-      - tar xzf apache-maven-3.9.0-bin.tar.gz
+      - aws --version
   build:
     commands:
-      - echo Entered the build phase...
+      - echo Build started on `date`
+      - echo Building the Docker image...
       - mvn clean install
   post_build:
     commands:
-      - echo Build completed successfully
+      - echo Build completed on `date`
 artifacts:
   files:
     - target/test-service.jar
