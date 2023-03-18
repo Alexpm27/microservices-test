@@ -11,6 +11,7 @@
     <groupId>com.example</groupId>
     <artifactId>WebHooksWithSpring</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
     <name>WebHooksWithSpring</name>
     <description>WebHooksWithSpring</description>
     <properties>
@@ -52,6 +53,7 @@
         <finalName>
             test-service
         </finalName>
+
     </build>
 
 </project>
