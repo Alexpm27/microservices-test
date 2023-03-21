@@ -10,7 +10,6 @@ phases:
   build:
     commands:
       - echo Build started on `date`
-      - echo Building the Docker image...
       - mvn clean install
   post_build:
     commands:
