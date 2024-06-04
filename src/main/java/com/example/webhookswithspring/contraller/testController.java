@@ -10,6 +10,6 @@ public class testController {
 
     @GetMapping
     public String test(){
-        return "Hi,from here!";
+        return "HI, API AVAILABLE!";
     }
 }
