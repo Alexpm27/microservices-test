@@ -33,9 +33,13 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>3.11.2</version> <!-- Usa la versión más reciente de Mockito -->
+            <scope>test</scope>
+        </dependency>
     </dependencies>
-
-
     <build>
         <plugins>
             <plugin>
@@ -44,7 +48,7 @@
             </plugin>
         </plugins>
         <finalName>
-            test-service
+                test-service
         </finalName>
 
     </build>

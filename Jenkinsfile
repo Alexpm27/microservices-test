@@ -13,6 +13,9 @@ try{
     stage('Build docker') {
          dockerImage = docker.build("springboot-deploy:${env.BUILD_NUMBER}")
     }
+    stage('Test') {
+                sh 'mvn test'
+            }
     stage('Deploy docker'){
           echo "Docker Image Tag Name: ${dockerImageTag}"
           sh "docker stop springboot-deploy || true && docker rm springboot-deploy || true"
