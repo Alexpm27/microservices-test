@@ -1,12 +1,16 @@
 # Docker Build Maven Stage
 FROM maven:3.8.4-openjdk-17 AS build
 
-# Copy folder in docker
+# Copy only the POM file to cache dependencies
+COPY ./pom.xml /opt/app/
 WORKDIR /opt/app
-COPY ./ /opt/app
 
-# Build the application
-RUN mvn clean install -DskipTests
+# Download dependencies only if the POM file has changed
+RUN mvn dependency:go-offline
+
+# Copy the rest of the application and build
+COPY ./src /opt/app/src/
+RUN mvn clean package -DskipTests
 
 # Run Spring Boot in Docker
 FROM openjdk:17-jdk-slim
