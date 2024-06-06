@@ -1,48 +1,56 @@
-pipeline {
-    agent any
-
-    environment {
-        JAVA_HOME = '/usr/lib/jvm/java-21-openjdk-amd64'
-        PATH = "${JAVA_HOME}/bin:${env.PATH}"
+node {
+    def WORKSPACE = "/var/lib/jenkins/workspace/springboot-deploy"
+    def dockerImageTag = "springboot-deploy${env.BUILD_NUMBER}"
+try{
+    notifyBuild('STARTED')
+    stage('Clone Repo') {
+        // for display purposes
+        // Get some code from a GitHub repository
+        git url: 'https://github.com/Alexpm27/microservices-test'
+           // credentialsId: 'springdeploy-user',
+           // branch: 'main'
+     }
+    stage('Build docker') {
+         dockerImage = docker.build("springboot-deploy:${env.BUILD_NUMBER}")
     }
-
-    stages {
-        stage('Checkout') {
-            steps {
-                git branch: 'main', url: 'https://github.com/Alexpm27/microservices-test.git'
-            }
-        }
-        stage('Build') {
-            steps {
-                sh './mvn clean package'
-            }
-        }
-        stage('Test') {
-            steps {
-                sh './mvn test'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                // Aquí puedes añadir los pasos para desplegar tu aplicación
-                // Por ejemplo, puedes usar Docker, Kubernetes, SCP, etc.
-                echo 'Desplegando aplicación...'
-                script {
-                    // Detener cualquier instancia existente de la aplicación
-                    sh 'pkill -f "java -jar" || true'
-
-                    // Ejecutar la nueva versión de la aplicación
-                    sh 'nohup java -jar target/test-service.jar > app.log 2>&1 &'}
-            }
-        }
+    stage('Deploy docker'){
+          echo "Docker Image Tag Name: ${dockerImageTag}"
+          sh "docker stop springboot-deploy || true && docker rm springboot-deploy || true"
+          sh "docker run --name springboot-deploy -d -p 8081:8081 springboot-deploy:${env.BUILD_NUMBER}"
     }
+}catch(e){
+    currentBuild.result = "FAILED"
+    throw e
+}finally{
+    notifyBuild(currentBuild.result)
+ }
+}
 
-    post {
-        success {
-            echo 'Pipeline completado con éxito.'
-        }
-        failure {
-            echo 'Pipeline falló.'
-        }
-    }
+
+def notifyBuild(String buildStatus = 'STARTED'){
+
+  // build status of null means successful
+  buildStatus =  buildStatus ?: 'SUCCESSFUL'
+
+  // Default values
+  def colorName = 'RED'
+  def colorCode = '#FF0000'
+  def now = new Date()
+
+  // message
+  def subject = "${buildStatus}, Job: ${env.JOB_NAME} FRONTEND - Deployment Sequence: [${env.BUILD_NUMBER}] "
+  def summary = "${subject} - Check On: (${env.BUILD_URL}) - Time: ${now}"
+  def subject_email = "Spring boot Deployment"
+  def details = """<p>${buildStatus} JOB </p>
+    <p>Job: ${env.JOB_NAME} - Deployment Sequence: [${env.BUILD_NUMBER}] - Time: ${now}</p>
+    <p>Check console output at "<a href="${env.BUILD_URL}">${env.JOB_NAME}</a>"</p>"""
+
+  // Email notification
+  emailext (
+     to: "alexpm.dev@gmail.com",
+     subject: subject_email,
+     body: details,
+     recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+  )
+
 }
