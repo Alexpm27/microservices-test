@@ -6,9 +6,9 @@ try{
     stage('Clone Repo') {
         // for display purposes
         // Get some code from a GitHub repository
-        git url: 'https://github.com/Alexpm27/microservices-test'
+        git url: 'https://github.com/Alexpm27/microservices-test',
            // credentialsId: 'springdeploy-user',
-           // branch: 'main'
+            branch: 'main'
      }
     stage('Build docker') {
          dockerImage = docker.build("springboot-deploy:${env.BUILD_NUMBER}")
