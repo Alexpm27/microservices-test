@@ -1,5 +1,5 @@
 # Docker Build Maven Stage
-FROM maven:3.8.6-openjdk-17 AS build
+FROM maven:3.8.4-openjdk-17 AS build
 
 # Copy folder in docker
 WORKDIR /opt/app
@@ -12,7 +12,7 @@ RUN mvn clean install -DskipTests
 FROM openjdk:17-jdk-slim
 
 # Copy the JAR file from the build stage
-COPY --from=build /opt/app/target/*.jar test-service.jar
+COPY --from=build /opt/app/target/*.jar app.jar
 
 # Set environment variable for the port
 ENV PORT 8081
@@ -21,4 +21,4 @@ ENV PORT 8081
 EXPOSE $PORT
 
 # Entry point for the application
-ENTRYPOINT ["java", "-jar", "-Xmx1024M", "-Dserver.port=${PORT}", "test-service.jar"]
+ENTRYPOINT ["java", "-jar", "-Xmx1024M", "-Dserver.port=${PORT}", "app.jar"]
